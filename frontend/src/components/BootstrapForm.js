@@ -35,13 +35,12 @@ const BootstrapForm = (props) => {
     setValidated(true);
     const requestOptions = {
       method: "POST",
-      mode: "cors",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     };
-    fetch("http://localhost:5000/api/customer-token", requestOptions)
+    fetch(process.env.REACT_APP_URL + "/api/customer-token", requestOptions)
       .then((response) => response.json())
       .then((result) => {
         console.log(result);

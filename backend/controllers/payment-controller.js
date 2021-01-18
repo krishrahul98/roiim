@@ -45,7 +45,7 @@ const postPayment = async (req, res, next) => {
 const customerPayId = async (req, callback) => {
   const url = "https://api.test.paysafe.com/paymenthub/v1/customers";
   const data = {
-    merchantCustomerId: req.email + "id1",
+    merchantCustomerId: req.email + "id2",
     firstName: req.firstName,
     email: req.email,
     phone: req.phone,
@@ -58,7 +58,7 @@ const customerPayId = async (req, callback) => {
   };
 
   request(requestOptions, (err, res, body) => {
-    //console.log(JSON.parse(body));
+    console.log(JSON.parse(body));
     return callback(JSON.parse(body).id);
   });
 };
@@ -93,7 +93,7 @@ const postCustomerToken = async (req, res, next) => {
     } else {
       if (!user) {
         await customerPayId(req.body, function (customerId) {
-          //console.log(result);
+          console.log(customerId);
           const newUser = {
             customerId: customerId,
             email: req.body.email,

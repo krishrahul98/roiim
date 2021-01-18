@@ -12,17 +12,6 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use("/api", paymentRoutes);
-// app.use((req, res, next) => {
-//   const error = new HttpError("Could not find this route.", 404);
-//   throw error;
-// });
-
-// app.use((error, req, res, next) => {
-//   if (res.headerSent) {
-//     return next(error);
-//   }
-//   console.log(error.message);
-// });
 mongoose
   .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,

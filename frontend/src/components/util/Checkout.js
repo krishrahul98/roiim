@@ -30,7 +30,7 @@ const checkout = (token, billingAddress, customer, merchantRefNum, amount) => {
         console.log(result.paymentHandleToken);
         window.$.ajax({
           type: "POST",
-          url: "http://localhost:5000/api/payment",
+          url: process.env.REACT_APP_URL + "/api/payment",
           contentType: "application/json",
           data: JSON.stringify({
             token: result.paymentHandleToken,
