@@ -1,14 +1,15 @@
-const checkout = (billingAddress, customer, amount) => {
+const checkout = (token, billingAddress, customer, merchantRefNum, amount) => {
   window.paysafe.checkout.setup(
     process.env.REACT_APP_PAYMENT_API,
     {
       currency: "USD",
       amount: parseInt(amount) * 100,
+      singleUseCustomerToken: token,
       locale: "en_US",
       customer: customer,
       billingAddress: billingAddress,
       environment: "TEST",
-      merchantRefNum: "1559900597607",
+      merchantRefNum: merchantRefNum,
       canEditAmount: false,
       merchantDescriptor: {
         dynamicDescriptor: "XYZ",
@@ -27,11 +28,27 @@ const checkout = (billingAddress, customer, amount) => {
     function (instance, error, result) {
       if (result && result.paymentHandleToken) {
         console.log(result.paymentHandleToken);
-        // make AJAX call to Payments API
-        instance.showSuccessScreen();
+        window.$.ajax({
+          type: "POST",
+          url: "http://localhost:5000/api/payment",
+          contentType: "application/json",
+          data: JSON.stringify({
+            token: result.paymentHandleToken,
+            amount: result.amount,
+          }),
+          success: (data) => {
+            if (data.error == null) {
+              console.log(data);
+              instance.showSuccessScreen("Payment Id: " + data.id);
+            } else {
+              instance.showFailureScreen("Payment was declined.");
+            }
+          },
+        });
       } else {
         console.error(error);
-        // Handle the error
+        alert(error);
+        console.error(error);
       }
     },
     function (stage, expired) {

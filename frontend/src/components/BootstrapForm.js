@@ -9,11 +9,11 @@ const BootstrapForm = (props) => {
     firstName: "Rahul",
     lastName: "Krishna",
     email: "26rahul09@gmail.com",
-    street: "Ashok Nagar",
-    city: "Patna",
-    state: "Bihar",
+    street: "St. Peter Road",
+    city: "Virginia Beach",
+    state: "Virginia",
     zip: "80002",
-    country: "India",
+    country: "United States",
     phone: "7858895623",
     amount: props.amount,
   });
@@ -33,27 +33,52 @@ const BootstrapForm = (props) => {
     event.preventDefault();
     console.log(data);
     setValidated(true);
-    const billingAddress = {
-      nickName: `${data.firstName} ${data.lastName}`,
-      city: data.city,
-      street: data.street,
-      zip: data.zip,
-      country: "US",
-      state: "VA",
-    };
-
-    const customer = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      phone: data.phone,
-      dateOfBirth: {
-        day: 4,
-        month: 5,
-        year: 1998,
+    const requestOptions = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify(data),
     };
-    Checkout(billingAddress, customer, data.amount);
+    fetch("http://localhost:5000/api/customer-token", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+        const token = result.token;
+        const billingAddress = {
+          nickName: data.firstName + " " + data.lastName,
+          city: data.city,
+          street: data.street,
+          zip: data.zip,
+          country: "US",
+          state: "VA",
+        };
+
+        const customer = {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          phone: data.phone,
+        };
+
+        function generateRandom(length) {
+          var result = "";
+          var characters =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+          var charactersLength = characters.length;
+          for (var i = 0; i < length; i++) {
+            result += characters.charAt(
+              Math.floor(Math.random() * charactersLength)
+            );
+          }
+          return result;
+        }
+
+        const merchantRefNum = generateRandom(24);
+
+        Checkout(token, billingAddress, customer, merchantRefNum, data.amount);
+      });
   };
   return (
     <div className='checkout'>
